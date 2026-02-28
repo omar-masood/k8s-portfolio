@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: alert-receiver
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: alert-receiver
+  template:
+    metadata:
+      labels:
+        app: alert-receiver
+    spec:
+      containers:
+        - name: receiver
+          image: mendhak/http-https-echo:31
+          ports:
+            - containerPort: 8080
+          env:
+            - name: HTTP_PORT
+              value: "8080"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: alert-receiver
+  namespace: monitoring
+spec:
+  selector:
+    app: alert-receiver
+  ports:
+    - port: 8080
+      targetPort: 8080
